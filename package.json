@@ -21,5 +21,11 @@
   "bugs": {
     "url": "https://github.com/mayajs/sql/issues"
   },
-  "homepage": "https://github.com/mayajs/sql#readme"
+  "homepage": "https://github.com/mayajs/sql#readme",
+  "devDependencies": {
+    "ts-lint": "^4.5.1",
+    "ts-node-dev": "^1.0.0-pre.42",
+    "tslint-config-prettier": "^1.18.0",
+    "typescript": "^3.6.2"
+  }
 }
