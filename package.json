@@ -4,7 +4,9 @@
   "description": "MayaJS Sql Decorators and Modules",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "npm run clean && wait-on -r index.js && tsc -w",
+    "clean": "rimraf *.d.ts && rimraf *.js && rimraf *.tgz",
+    "prepack": "npm run clean && wait-on -r index.js && tsc"
   },
   "repository": {
     "type": "git",
@@ -24,9 +26,9 @@
   "homepage": "https://github.com/mayajs/sql#readme",
   "devDependencies": {
     "ts-lint": "^4.5.1",
-    "ts-node-dev": "^1.0.0-pre.42",
     "tslint-config-prettier": "^1.18.0",
-    "typescript": "^3.6.2"
+    "typescript": "^3.6.2",
+    "wait-on": "^3.3.0"
   },
   "peerDependencies": {
     "mysql": "^2.17.1"
