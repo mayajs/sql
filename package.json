@@ -27,5 +27,11 @@
     "ts-node-dev": "^1.0.0-pre.42",
     "tslint-config-prettier": "^1.18.0",
     "typescript": "^3.6.2"
+  },
+  "peerDependencies": {
+    "mysql": "^2.17.1"
+  },
+  "dependencies": {
+    "mysql": "^2.17.1"
   }
 }
