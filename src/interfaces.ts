@@ -1,6 +1,8 @@
 export interface ConnectionOptions {
-  connectionString: string; // Connection string
-  options?: ConnectionOptions; // Mongoose connect options OPTIONAL
+  host: string;
+  user: string;
+  password: string;
+  database: string;
 }
 
 export interface Database {
