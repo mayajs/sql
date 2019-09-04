@@ -25,6 +25,7 @@
   },
   "homepage": "https://github.com/mayajs/sql#readme",
   "devDependencies": {
+    "@types/mysql": "^2.15.7",
     "ts-lint": "^4.5.1",
     "tslint-config-prettier": "^1.18.0",
     "typescript": "^3.6.2",
