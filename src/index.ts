@@ -75,4 +75,23 @@ function Delete<T>(table: string, condition: string): Promise<T> {
   return Query<T>(`DELETE FROM ${table} WHERE ${condition}`);
 }
 
-export { Query, Sql, Schema, CreateDatabase, CreateTable, Insert, Select, Delete };
+function Update<T>(
+  table: string,
+  fields: { [name: string]: any },
+  where: { [name: string]: string },
+  options: { orderBy?: string; limit?: number } = {}
+): Promise<T> {
+  const filedsKey = Object.keys(fields);
+  const whereKey = Object.keys(where);
+  const values = filedsKey.map(key => `'${fields[key]}'`).join();
+  const condition = whereKey.map((key: any) => `'${whereKey[key]}'`).join();
+  let query = `UPDATE ${table} SET ${values} WHERE ${condition}`;
+  if (options) {
+    const { orderBy = "", limit = "" } = options;
+    query += ` ${limit ? `LIMIT ${limit}` : ""} ${orderBy ? `ORDER BY ${orderBy}` : ""}`;
+  }
+
+  return Query<T>(query);
+}
+
+export { Query, Sql, Schema, CreateDatabase, CreateTable, Insert, Select, Delete, Update };
