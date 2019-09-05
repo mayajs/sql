@@ -26,15 +26,14 @@ function Sql(options: ConnectionOptions): SqlDatabase {
   return sql;
 }
 
-function Query<T>(query: string): Promise<T> {
+function Query<T>(query: string, value?: any): Promise<T> {
   return new Promise((resolve, reject) => {
+    const callback = (error: any, result: any) => (error ? reject(error) : resolve(result));
     try {
-      db.query(query, (error: any, result: any) => {
-        if (error) {
-          return reject(error);
-        }
-        return resolve(result);
-      });
+      if (value) {
+        db.query(query, callback);
+      }
+      db.query(query, value, callback);
     } catch (error) {
       reject(error);
     }
