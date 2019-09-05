@@ -55,4 +55,10 @@ function CreateTable<T>(name: string, fields: Schema): Promise<T> {
   return Query<T>(`CREATE TABLE ${name} (${query})`);
 }
 
-export { Query, Sql, CreateDatabase, CreateTable, Schema };
+function Insert<T>(name: string, fields: { [name: string]: any }): Promise<T> {
+  const query = Object.keys(fields);
+  const values = query.map(key => `'${fields[key]}'`).join();
+  return Query<T>(`INSERT INTO ${name} (${query.join()}) VALUES (${values})`);
+}
+
+export { Query, Sql, Schema, CreateDatabase, CreateTable, Insert };
