@@ -65,4 +65,8 @@ function Select<T>(select: string, where?: string, join?: string): Promise<T> {
   return Query<T>(`SELECT ${select} ${join ? join : ""} ${where ? where : ""}`);
 }
 
-export { Query, Sql, Schema, CreateDatabase, CreateTable, Insert, Select };
+function Delete<T>(table: string, condition: string): Promise<T> {
+  return Query<T>(`DELETE FROM ${table} WHERE ${condition}`);
+}
+
+export { Query, Sql, Schema, CreateDatabase, CreateTable, Insert, Select, Delete };
