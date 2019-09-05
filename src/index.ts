@@ -28,12 +28,16 @@ function Sql(options: ConnectionOptions): SqlDatabase {
 
 function Query<T>(query: string): Promise<T> {
   return new Promise((resolve, reject) => {
-    db.query(query, (err: any, result: any) => {
-      if (err) {
-        return reject(err);
-      }
-      return resolve(result);
-    });
+    try {
+      db.query(query, (error: any, result: any) => {
+        if (error) {
+          return reject(error);
+        }
+        return resolve(result);
+      });
+    } catch (error) {
+      reject(error);
+    }
   });
 }
 
