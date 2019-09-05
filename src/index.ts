@@ -31,9 +31,10 @@ function Query<T>(query: string, value?: any): Promise<T> {
     const callback = (error: any, result: any) => (error ? reject(error) : resolve(result));
     try {
       if (value) {
-        db.query(query, callback);
+        db.query(query, value, callback);
+        return;
       }
-      db.query(query, value, callback);
+      db.query(query, callback);
     } catch (error) {
       reject(error);
     }
