@@ -61,4 +61,8 @@ function Insert<T>(name: string, fields: { [name: string]: any }): Promise<T> {
   return Query<T>(`INSERT INTO ${name} (${query.join()}) VALUES (${values})`);
 }
 
-export { Query, Sql, Schema, CreateDatabase, CreateTable, Insert };
+function Select<T>(select: string, where?: string, join?: string): Promise<T> {
+  return Query<T>(`SELECT ${select} ${join ? join : ""} ${where ? where : ""}`);
+}
+
+export { Query, Sql, Schema, CreateDatabase, CreateTable, Insert, Select };
