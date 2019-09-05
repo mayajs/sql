@@ -1,16 +1,16 @@
 import { ConnectionOptions, Database } from "./interfaces";
 import mysql, { Connection } from "mysql";
 
-let query: Connection;
+let db: Connection;
 
 class SqlDatabase implements Database {
   constructor(private options: ConnectionOptions) {}
 
   connect(): Promise<any> {
-    query = mysql.createConnection(this.options);
+    db = mysql.createConnection(this.options);
 
     return new Promise((resolve: any, reject: any) => {
-      query.connect((err: any) => {
+      db.connect((err: any) => {
         return err ? reject(err.stack) : resolve();
       });
     });
@@ -26,8 +26,15 @@ function Sql(options: ConnectionOptions): SqlDatabase {
   return sql;
 }
 
-function Query(): Connection {
-  return query;
+function Query<T>(query: string): Promise<T> {
+  return new Promise((resolve, reject) => {
+    db.query(query, (err: any, result: any) => {
+      if (err) {
+        return reject(err);
+      }
+      return resolve(result);
+    });
+  });
 }
 
 export { Query, Sql };
