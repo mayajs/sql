@@ -1,4 +1,4 @@
-import { ConnectionOptions, Database } from "./interfaces";
+import { ConnectionOptions, Database, Schema } from "./interfaces";
 import mysql, { Connection } from "mysql";
 
 let db: Connection;
@@ -41,4 +41,14 @@ function Query<T>(query: string): Promise<T> {
   });
 }
 
-export { Query, Sql };
+function CreateTable<T>(name: string, fields: Schema): Promise<T> {
+  const query: string = Object.keys(fields)
+    .map(key => {
+      const { type, options } = fields[key];
+      return `${key} ${type} ${options ? options : ""}`;
+    })
+    .join();
+  return Query<T>(`CREATE TABLE ${name} (${query})`);
+}
+
+export { Query, Sql, CreateTable, Schema };
