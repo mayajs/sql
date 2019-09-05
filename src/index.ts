@@ -55,10 +55,10 @@ function CreateTable<T>(name: string, fields: Schema): Promise<T> {
   return Query<T>(`CREATE TABLE ${name} (${query})`);
 }
 
-function Insert<T>(name: string, fields: { [name: string]: any }): Promise<T> {
+function Insert<T>(table: string, fields: { [name: string]: any }): Promise<T> {
   const query = Object.keys(fields);
   const values = query.map(key => `'${fields[key]}'`).join();
-  return Query<T>(`INSERT INTO ${name} (${query.join()}) VALUES (${values})`);
+  return Query<T>(`INSERT INTO ${table} (${query.join()}) VALUES (${values})`);
 }
 
 function Select<T>(options: { table: string; where?: string; join?: string; orderBy?: string; limit?: number } | string): Promise<T> {
