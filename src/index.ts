@@ -40,6 +40,10 @@ function Query<T>(query: string, value?: any): Promise<T> {
   });
 }
 
+function CreateDatabase<T>(name: string): Promise<T> {
+  return Query<T>(`CREATE DATABASE ${name}`);
+}
+
 function CreateTable<T>(name: string, fields: Schema): Promise<T> {
   const query: string = Object.keys(fields)
     .map(key => {
@@ -50,4 +54,4 @@ function CreateTable<T>(name: string, fields: Schema): Promise<T> {
   return Query<T>(`CREATE TABLE ${name} (${query})`);
 }
 
-export { Query, Sql, CreateTable, Schema };
+export { Query, Sql, CreateDatabase, CreateTable, Schema };
