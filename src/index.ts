@@ -61,11 +61,11 @@ function Insert<T>(name: string, fields: { [name: string]: any }): Promise<T> {
   return Query<T>(`INSERT INTO ${name} (${query.join()}) VALUES (${values})`);
 }
 
-function Select<T>(options: { select: string; where?: string; join?: string; orderBy?: string; limit?: number } | string): Promise<T> {
+function Select<T>(options: { table: string; where?: string; join?: string; orderBy?: string; limit?: number } | string): Promise<T> {
   let query = `SELECT ${options}`;
   if (typeof options !== "string") {
-    const { select, join = "", where = "", orderBy = "", limit = "" } = options;
-    query = `SELECT ${select} ${join} ${where} ${limit ? `LIMIT ${limit}` : ""} ${orderBy ? `ORDER BY ${orderBy}` : ""}`;
+    const { table, join = "", where = "", orderBy = "", limit = "" } = options;
+    query = `SELECT ${table} ${join} ${where} ${limit ? `LIMIT ${limit}` : ""} ${orderBy ? `ORDER BY ${orderBy}` : ""}`;
   }
 
   return Query<T>(query);
