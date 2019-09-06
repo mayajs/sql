@@ -224,6 +224,7 @@ This function will select data on a table in the database. It accepts `options` 
 **Parameter**
 
 - `options` : **`( Object )`** Query options.
+  - `columns` : **`( Array )`** Column names to be selected. \***\*OPTIONAL\*\***.
   - `table` : **`( String )`** Name of the table.
   - `where` : **`( String )`** Equivalent to `WHERE` clause in SQL query. \***\*OPTIONAL\*\***.
   - `join` : **`( String )`** Equivalent to `JOIN` clause in SQL query. \***\*OPTIONAL\*\***.
@@ -241,7 +242,8 @@ import { Select } from "@mayajs/sql";
 ```javascript
 // Select OPTIONS
 const options = {
-  table: "* FROM customers",
+  columns: ["id", "email"],
+  table: "customers",
   where: "id=1",
   join: "products ON customers.favorite_product = products.id",
   orderBy: "id DESC",
