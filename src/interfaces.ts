@@ -10,6 +10,12 @@ export interface Database {
   connection: (logs: boolean) => void;
 }
 
+export interface ITransaction {
+  begin: () => Promise<any>;
+  commit: () => Promise<any>;
+  rollback: () => Promise<any>;
+}
+
 export interface Schema {
   [k: string]: Field;
 }

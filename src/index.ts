@@ -1,4 +1,4 @@
-import { ConnectionOptions, Database, Schema } from "./interfaces";
+import { ConnectionOptions, Database, Schema, ITransaction } from "./interfaces";
 import mysql, { Connection } from "mysql";
 
 let db: Connection;
@@ -85,4 +85,40 @@ function Update<T>(table: string, fields: { [name: string]: any }, where: { [nam
   return Query<T>(`UPDATE ${table} SET ${values} WHERE ${condition}`);
 }
 
-export { Query, Sql, Schema, CreateDatabase, CreateTable, Insert, Select, Delete, Update };
+// tslint:disable-next-line: max-classes-per-file
+class Transaction implements ITransaction {
+  begin<T>(): Promise<T> {
+    return new Promise((resolve, reject) => {
+      db.beginTransaction((error: any): void => {
+        if (error) {
+          reject(error);
+          return;
+        }
+        resolve();
+      });
+    });
+  }
+
+  commit<T>(): Promise<T> {
+    return new Promise((resolve, reject) => {
+      db.commit((error: any): void => {
+        if (error) {
+          reject(error);
+          return;
+        }
+        resolve();
+        db.end();
+      });
+    });
+  }
+
+  rollback<T>(): Promise<T> {
+    return new Promise(resolve => {
+      db.rollback((): void => {
+        resolve();
+      });
+    });
+  }
+}
+
+export { Query, Sql, Schema, CreateDatabase, CreateTable, Insert, Select, Delete, Update, Transaction };
