@@ -29,6 +29,7 @@
   },
   "homepage": "https://github.com/mayajs/sql#readme",
   "devDependencies": {
+    "@types/sequelize": "^4.28.9",
     "@types/mysql": "^2.15.7",
     "ts-lint": "^4.5.1",
     "tslint-config-prettier": "^1.18.0",
@@ -36,6 +37,6 @@
     "wait-on": "^3.3.0"
   },
   "dependencies": {
-    "mysql": "^2.17.1"
+    "sequelize": "^6.3.3"
   }
 }
