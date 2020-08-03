@@ -1,8 +1,9 @@
+import { Options } from 'sequelize'
+
 export interface SqlOptions {
-  host: string
-  user: string
-  password: string
-  database?: string
+  name?: string
+  schemas?: any[]
+  options?: Options
 }
 
 export interface ModelList {
