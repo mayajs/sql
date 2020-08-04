@@ -46,16 +46,20 @@
   },
   "devDependencies": {
     "@types/sequelize": "^4.28.9",
+    "mariadb": "^2.4.2",
+    "mysql2": "^2.1.0",
+    "pg": "^8.3.0",
+    "pg-hstore": "^2.3.3",
     "prettier": "^2.0.5",
     "rimraf": "^3.0.2",
+    "sequelize": "^6.3.4",
+    "sqlite3": "^5.0.0",
+    "tedious": "^9.0.1",
     "ts-lint": "^4.5.1",
     "tslint-config-prettier": "^1.18.0",
     "typescript": "^3.9.7"
   },
   "peerDependencies": {
-    "sequelize": "^6.3.4"
-  },
-  "dependencies": {
     "@types/sequelize": "^4.28.9",
     "sequelize": "^6.3.4"
   }
