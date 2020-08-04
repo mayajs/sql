@@ -5,6 +5,10 @@ class SqlDatabase implements Database {
   private dbInstance: Sequelize;
   private dbName: string;
 
+  get name(): string {
+    return this.dbName;
+  }
+
   /**
    * @param {SqlOptions} options
    */
