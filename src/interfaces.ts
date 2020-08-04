@@ -7,6 +7,11 @@ export interface ISqlConnection {
   options?: Options;
 }
 
+export interface ISqlUriConnection {
+  uri: string;
+  options?: Options;
+}
+
 export interface SqlOptions {
   name?: string;
   schemas?: any[];
