@@ -1,17 +1,15 @@
-import { Sequelize, ModelAttributes } from 'sequelize'
-
-import { Database, SqlOptions, ModelList } from './interfaces'
+import { Sequelize, ModelAttributes } from "sequelize";
+import { Database, SqlOptions, ModelList } from "./interfaces";
 
 class SqlDatabase implements Database {
-  dbInstance: Sequelize = new Sequelize()
-
-  options: SqlOptions
+  dbInstance: Sequelize = new Sequelize();
+  options: SqlOptions;
 
   /**
    * @param {SqlOptions} options
    */
   constructor(options: SqlOptions) {
-    this.options = options
+    this.options = options;
   }
 
   /**
@@ -21,15 +19,15 @@ class SqlDatabase implements Database {
    */
   async connect(): Promise<boolean> {
     try {
-      this.dbInstance = new Sequelize(this.options.options)
+      this.dbInstance = new Sequelize(this.options.options);
 
-      await this.dbInstance.sync()
+      await this.dbInstance.sync();
 
-      return true
+      return true;
     } catch (error) {
-      console.error('Unable to sync to the database:', error)
+      console.error("Unable to sync to the database:", error);
 
-      return false
+      return false;
     }
   }
   /**
@@ -43,12 +41,12 @@ class SqlDatabase implements Database {
       .authenticate()
       .then(() => {
         if (logs) {
-          console.log('Connection has been established successfully.')
+          console.log("Connection has been established successfully.");
         }
       })
-      .catch((error) => {
-        console.error('Unable to connect to the database:', error)
-      })
+      .catch(error => {
+        console.error("Unable to connect to the database:", error);
+      });
   }
   /**
    * Iterates model list.
@@ -57,13 +55,13 @@ class SqlDatabase implements Database {
    * @returns void
    */
   models(models: ModelList[]): void {
-    models.forEach(async (model) => {
-      const instance = await import(model.path)
+    models.forEach(async model => {
+      const instance = await import(model.path);
 
-      const { name, schema } = instance.default ?? instance
+      const { name, schema } = instance.default ?? instance;
 
-      this.addModel(name, schema)
-    })
+      this.addModel(name, schema);
+    });
   }
   /**
    * Defines schema to sequelize.
@@ -73,10 +71,10 @@ class SqlDatabase implements Database {
    * @returns void
    */
   addModel(name: string, schema: ModelAttributes): void {
-    this.dbInstance.define(name, schema)
+    this.dbInstance.define(name, schema);
   }
 }
 
 export function Sql(options: SqlOptions): SqlDatabase {
-  return new SqlDatabase(options)
+  return new SqlDatabase(options);
 }
