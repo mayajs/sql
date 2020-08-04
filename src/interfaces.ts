@@ -13,9 +13,9 @@ export interface ISqlUriConnection {
 }
 
 export interface SqlOptions {
-  name?: string;
+  name: string;
   schemas?: any[];
-  options?: Options;
+  options: ISqlUriConnection | ISqlConnection | Options | string;
 }
 
 export interface ModelList {
