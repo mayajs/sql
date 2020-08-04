@@ -9,6 +9,10 @@ class SqlDatabase implements Database {
     return this.dbName;
   }
 
+  get instance(): Sequelize {
+    return this.dbInstance;
+  }
+
   /**
    * @param {SqlOptions} options
    */
