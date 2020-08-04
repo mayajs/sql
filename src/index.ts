@@ -1,4 +1,4 @@
-import { Sequelize, ModelAttributes, Options } from "sequelize";
+import { Sequelize, ModelAttributes, Options, ModelOptions } from "sequelize";
 import { Database, SqlOptions, ISqlUriConnection, ISqlConnection, SchemaObject, SqlModelDictionary } from "./interfaces";
 
 class SqlDatabase implements Database {
@@ -31,11 +31,9 @@ class SqlDatabase implements Database {
   async connect(): Promise<boolean> {
     try {
       await this.dbInstance.sync();
-
       return true;
     } catch (error) {
       console.error("Unable to sync to the database:", error);
-
       return false;
     }
   }
@@ -95,4 +93,8 @@ class SqlDatabase implements Database {
 
 export function Sql(options: SqlOptions): SqlDatabase {
   return new SqlDatabase(options);
+}
+
+export function SqlModel(name: string, schema: ModelAttributes, options: ModelOptions = {}): SchemaObject {
+  return { name, schema, options };
 }
