@@ -1,4 +1,4 @@
-import { Options, ModelCtor, Model } from "sequelize";
+import { Options, ModelCtor, Model, ModelAttributes, ModelOptions } from "sequelize";
 
 export interface ISqlConnection {
   database: string;
@@ -31,4 +31,10 @@ export interface Database {
   connect: () => Promise<any>;
   connection: (logs: boolean) => void;
   models: (array: ModelList[]) => void;
+}
+
+export interface SchemaObject {
+  name: string;
+  schema: ModelAttributes;
+  options: ModelOptions;
 }
