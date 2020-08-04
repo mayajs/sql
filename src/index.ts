@@ -1,15 +1,16 @@
-import { Sequelize, ModelAttributes } from "sequelize";
-import { Database, SqlOptions, ModelList } from "./interfaces";
+import { Sequelize, ModelAttributes, Options } from "sequelize";
+import { Database, SqlOptions, ModelList, ISqlUriConnection, ISqlConnection } from "./interfaces";
 
 class SqlDatabase implements Database {
-  dbInstance: Sequelize = new Sequelize();
-  options: SqlOptions;
+  private dbInstance: Sequelize;
+  private dbName: string;
 
   /**
    * @param {SqlOptions} options
    */
-  constructor(options: SqlOptions) {
-    this.options = options;
+  constructor({ options, name, schemas = [] }: SqlOptions) {
+    this.dbName = name;
+    this.dbInstance = this.createDbInstance(options);
   }
 
   /**
@@ -19,8 +20,6 @@ class SqlDatabase implements Database {
    */
   async connect(): Promise<boolean> {
     try {
-      this.dbInstance = new Sequelize(this.options.options);
-
       await this.dbInstance.sync();
 
       return true;
@@ -72,6 +71,28 @@ class SqlDatabase implements Database {
    */
   addModel(name: string, schema: ModelAttributes): void {
     this.dbInstance.define(name, schema);
+  }
+
+  /**
+   * Creates a Sequelize instance.
+   *
+   * @param  {ISqlUriConnection | ISqlConnection | Options | string} settings
+   * @returns Sequelize
+   */
+  private createDbInstance(settings?: ISqlUriConnection | ISqlConnection | Options | string): Sequelize {
+    const { uri, options = {} } = settings as ISqlUriConnection;
+
+    if (uri) {
+      return new Sequelize(uri, options);
+    }
+
+    const { database, username, password = "" } = settings as ISqlConnection;
+
+    if (database) {
+      return new Sequelize(database, username, password, options);
+    }
+
+    return new Sequelize(settings as Options);
   }
 }
 
