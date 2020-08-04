@@ -65,7 +65,7 @@ class SqlDatabase implements Database {
    * @param  {ModelList[]} models
    * @returns void
    */
-  models(models: ModelList[]): void {
+  models(): void {
     this.schemas.map(({ name, schema, options = {} }: SchemaObject) => this.dbInstance.define(name, schema, options));
   }
 

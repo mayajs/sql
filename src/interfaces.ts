@@ -30,7 +30,7 @@ export interface SqlModelDictionary {
 export interface Database {
   connect: () => Promise<any>;
   connection: (logs: boolean) => void;
-  models: (array: ModelList[]) => void;
+  models: () => void;
 }
 
 export interface SchemaObject {
