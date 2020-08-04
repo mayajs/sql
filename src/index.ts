@@ -1,5 +1,5 @@
 import { Sequelize, ModelAttributes, Options } from "sequelize";
-import { Database, SqlOptions, ModelList, ISqlUriConnection, ISqlConnection, SchemaObject } from "./interfaces";
+import { Database, SqlOptions, ISqlUriConnection, ISqlConnection, SchemaObject, SqlModelDictionary } from "./interfaces";
 
 class SqlDatabase implements Database {
   private dbInstance: Sequelize;
@@ -65,8 +65,9 @@ class SqlDatabase implements Database {
    * @param  {ModelList[]} models
    * @returns void
    */
-  models(): void {
+  models(): SqlModelDictionary {
     this.schemas.map(({ name, schema, options = {} }: SchemaObject) => this.dbInstance.define(name, schema, options));
+    return this.dbInstance.models;
   }
 
   /**
