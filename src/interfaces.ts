@@ -1,4 +1,4 @@
-import { Options, ModelCtor, Model, ModelAttributes, ModelOptions, Sequelize } from "sequelize";
+import { Options, ModelAttributes, ModelOptions, ModelCtor, Model, Sequelize } from "sequelize";
 
 export interface ISqlConnection {
   database: string;
@@ -16,11 +16,6 @@ export interface SqlOptions {
   name: string;
   schemas?: any[];
   options: ISqlUriConnection | ISqlConnection | Options | string;
-}
-
-export interface ModelList {
-  name: string;
-  path: string;
 }
 
 export interface SqlModelDictionary {
