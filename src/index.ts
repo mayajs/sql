@@ -1,9 +1,10 @@
 import { Sequelize, ModelAttributes, Options } from "sequelize";
-import { Database, SqlOptions, ModelList, ISqlUriConnection, ISqlConnection } from "./interfaces";
+import { Database, SqlOptions, ModelList, ISqlUriConnection, ISqlConnection, SchemaObject } from "./interfaces";
 
 class SqlDatabase implements Database {
   private dbInstance: Sequelize;
   private dbName: string;
+  private schemas: SchemaObject[] = [];
 
   get name(): string {
     return this.dbName;
@@ -18,6 +19,7 @@ class SqlDatabase implements Database {
    */
   constructor({ options, name, schemas = [] }: SqlOptions) {
     this.dbName = name;
+    this.schemas = schemas;
     this.dbInstance = this.createDbInstance(options);
   }
 
@@ -37,6 +39,7 @@ class SqlDatabase implements Database {
       return false;
     }
   }
+
   /**
    * Checks if there is an existing database connection.
    *
@@ -55,6 +58,7 @@ class SqlDatabase implements Database {
         console.error("Unable to connect to the database:", error);
       });
   }
+
   /**
    * Iterates model list.
    *
@@ -62,23 +66,7 @@ class SqlDatabase implements Database {
    * @returns void
    */
   models(models: ModelList[]): void {
-    models.forEach(async model => {
-      const instance = await import(model.path);
-
-      const { name, schema } = instance.default ?? instance;
-
-      this.addModel(name, schema);
-    });
-  }
-  /**
-   * Defines schema to sequelize.
-   *
-   * @param  {string} name
-   * @param  {ModelAttributes} schema
-   * @returns void
-   */
-  addModel(name: string, schema: ModelAttributes): void {
-    this.dbInstance.define(name, schema);
+    this.schemas.map(({ name, schema, options = {} }: SchemaObject) => this.dbInstance.define(name, schema, options));
   }
 
   /**
