@@ -28,7 +28,7 @@ class SqlDatabase implements Database {
   /**
    * Creates and connects to the database instance.
    *
-   * @returns Promise
+   * @returns Promise<boolean>
    */
   async connect(): Promise<boolean> {
     try {
@@ -60,10 +60,9 @@ class SqlDatabase implements Database {
   }
 
   /**
-   * Iterates model list.
+   * Iterates schema list and define individual model.
    *
-   * @param  {ModelList[]} models
-   * @returns void
+   * @returns SqlModelDictionary
    */
   models(): SqlModelDictionary {
     this.schemas.map(({ name, schema, options = {} }: SchemaObject) => this.dbInstance.define(name, schema, options));
