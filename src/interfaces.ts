@@ -1,5 +1,12 @@
 import { Options } from "sequelize";
 
+export interface ISqlConnection {
+  database: string;
+  username: string;
+  password?: string;
+  options?: Options;
+}
+
 export interface SqlOptions {
   name?: string;
   schemas?: any[];
