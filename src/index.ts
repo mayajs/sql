@@ -1,6 +1,8 @@
 import { Sequelize, ModelAttributes, Options, ModelOptions } from "sequelize";
 import { Database, SqlOptions, ISqlUriConnection, ISqlConnection, SchemaObject, SqlModelDictionary } from "./interfaces";
 
+const logger = (message: string) => console.log(`\x1b[32m[mayajs] ${message}\x1b[0m`);
+
 class SqlDatabase implements Database {
   private dbInstance: Sequelize;
   private dbName: string;
@@ -49,7 +51,7 @@ class SqlDatabase implements Database {
       .authenticate()
       .then(() => {
         if (logs) {
-          console.log("Connection has been established successfully.");
+          logger("Connection has been established successfully.");
         }
       })
       .catch(error => {
@@ -76,6 +78,10 @@ class SqlDatabase implements Database {
    */
   private createDbInstance(settings?: ISqlUriConnection | ISqlConnection | Options | string): Sequelize {
     const { uri, options = {} } = settings as ISqlUriConnection;
+    const message = `Waiting for ${this.dbName} sql database to connect.`;
+    options.logging = () => {
+      logger(message);
+    };
 
     if (uri) {
       return new Sequelize(uri, options);
