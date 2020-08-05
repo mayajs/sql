@@ -7,6 +7,8 @@ const logger = {
   yellow: (message: string) => console.log(`\x1b[33m[mayajs] ${message}\x1b[0m`),
 };
 
+let models: SqlModelDictionary = {};
+
 class SqlDatabase implements Database {
   private dbInstance!: Sequelize;
   private dbName: string;
@@ -82,7 +84,8 @@ class SqlDatabase implements Database {
   models(): SqlModelDictionary {
     this.dbInstance.sync({ alter: true });
     this.schemas.map(({ name, schema, options = {} }: SchemaObject) => this.dbInstance.define(name.toLocaleLowerCase(), schema, options));
-    return this.dbInstance.models;
+    models = this.dbInstance.models;
+    return models;
   }
 
   /**
@@ -115,4 +118,32 @@ export function Sql(options: SqlOptions): SqlDatabase {
 
 export function SqlModel(name: string, schema: ModelAttributes, options: ModelOptions = {}): SchemaObject {
   return { name, schema, options };
+}
+
+export function Models(name: string): any {
+  return (target: any, key: string): any => {
+    // property value
+    let value = target[key];
+
+    // property getter method
+    const getter = () => {
+      return models[name];
+    };
+
+    // property setter method
+    const setter = (newVal: string) => {
+      value = models[newVal];
+    };
+
+    // Delete property.
+    if (delete target[key]) {
+      // Create new property with getter and setter
+      Object.defineProperty(target, key, {
+        configurable: true,
+        enumerable: true,
+        get: getter,
+        set: setter,
+      });
+    }
+  };
 }
