@@ -2,40 +2,65 @@
   "name": "@mayajs/sql",
   "version": "0.1.2",
   "description": "MayaJS Sql Decorators and Modules",
-  "main": "index.js",
-  "files": [
-    "*.d.ts",
-    "*.js"
-  ],
-  "scripts": {
-    "start": "npm run clean && wait-on -r index.js && tsc -w",
-    "clean": "rimraf *.d.ts && rimraf *.js && rimraf *.tgz",
-    "prepack": "npm run clean && wait-on -r index.js && tsc"
-  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/mayajs/sql.git"
   },
-  "keywords": [
-    "@mayajs/core",
-    "sql",
-    "typescript",
-    "decorators"
-  ],
   "author": "Mark Anthony C. Ignacio",
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/mayajs/sql/issues"
   },
   "homepage": "https://github.com/mayajs/sql#readme",
+  "keywords": [
+    "@mayajs/core",
+    "sql",
+    "sequelize",
+    "typescript",
+    "mysql",
+    "mariadb",
+    "sqlite",
+    "postgresql",
+    "postgres",
+    "mssql",
+    "orm",
+    "nodejs",
+    "object relational mapper"
+  ],
+  "main": "lib/index.js",
+  "engines": {
+    "node": ">=12.0.0"
+  },
+  "files": [
+    "lib"
+  ],
+  "scripts": {
+    "start": "rimraf lib && tsc -w",
+    "prepack": "rimraf lib && tsc"
+  },
+  "prettier": {
+    "singleQuote": false,
+    "printWidth": 160,
+    "arrowParens": "avoid",
+    "trailingComma": "all"
+  },
   "devDependencies": {
-    "@types/mysql": "^2.15.7",
+    "@types/sequelize": "^4.28.9",
+    "mariadb": "^2.4.2",
+    "mysql2": "^2.1.0",
+    "pg": "^8.3.0",
+    "pg-hstore": "^2.3.3",
+    "prettier": "^2.0.5",
+    "rimraf": "^3.0.2",
+    "sequelize": "^6.3.4",
+    "sqlite3": "^5.0.0",
+    "tedious": "^9.0.1",
     "ts-lint": "^4.5.1",
     "tslint-config-prettier": "^1.18.0",
-    "typescript": "^3.6.2",
-    "wait-on": "^3.3.0"
+    "typescript": "^3.9.7"
   },
-  "dependencies": {
-    "mysql": "^2.17.1"
+  "peerDependencies": {
+    "@types/sequelize": "^4.28.9",
+    "sequelize": "^6.3.4"
   }
 }

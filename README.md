@@ -9,15 +9,19 @@ npm i @mayajs/sql
 
 ## Functions
 
+- [Installation](#installation)
+- [Functions](#functions)
 - [Sql](#sql)
 - [Schema](#schema)
+    - [Field](#field)
 - [Query](#query)
-- [CreateDatabase](#create-database)
-- [CreateTable](#create-table)
-- [Insert](#Insert)
-- [Select](#Select)
-- [Update](#Update)
-- [Delete](#Delete)
+- [Create database](#create-database)
+- [Create table](#create-table)
+- [Insert](#insert)
+- [Select](#select)
+- [Update](#update)
+- [Delete](#delete)
+- [Transaction](#transaction)
 
 ## Sql
 
@@ -333,6 +337,32 @@ try {
   const result = await Delete("test", "id=1");
   return result;
 } catch (error) {
+  return error;
+}
+```
+
+## Transaction
+
+Transactions allows you process a transaction and rollback if a transaction fails. 
+
+**Import**
+
+```javascript
+import { Transaction, Delete } from "@mayajs/sql";
+```
+
+**Implementation**
+
+```javascript
+// Async/Await
+const transaction = new Transaction()
+try {
+  await transaction.begin()
+  const result = await Delete("test", "id=1");
+  await transaction.commit()
+  return result;
+} catch (error) {
+  await transaction.rollback()
   return error;
 }
 ```
