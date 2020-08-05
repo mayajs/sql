@@ -1,12 +1,19 @@
 import { Sequelize, ModelAttributes, Options, ModelOptions } from "sequelize";
 import { Database, SqlOptions, ISqlUriConnection, ISqlConnection, SchemaObject, SqlModelDictionary } from "./interfaces";
 
-const logger = (message: string) => console.log(`\x1b[32m[mayajs] ${message}\x1b[0m`);
+const logger = {
+  gray: (message: string) => console.log(`\x1b[32m[mayajs]\x1b[0m ${message}`),
+  green: (message: string) => console.log(`\x1b[32m[mayajs] ${message}\x1b[0m`),
+  yellow: (message: string) => console.log(`\x1b[33m[mayajs] ${message}\x1b[0m`),
+};
 
 class SqlDatabase implements Database {
-  private dbInstance: Sequelize;
+  private dbInstance!: Sequelize;
   private dbName: string;
   private schemas: SchemaObject[] = [];
+  private connectionOptions: string | ISqlUriConnection | ISqlConnection | Options;
+  private logs!: boolean;
+  private isConnected = false;
 
   get name(): string {
     return this.dbName;
@@ -22,7 +29,7 @@ class SqlDatabase implements Database {
   constructor({ options, name, schemas = [] }: SqlOptions) {
     this.dbName = name;
     this.schemas = schemas;
-    this.dbInstance = this.createDbInstance(options);
+    this.connectionOptions = options;
   }
 
   /**
@@ -30,13 +37,21 @@ class SqlDatabase implements Database {
    *
    * @returns Promise<boolean>
    */
-  async connect(): Promise<boolean> {
+  async connect(): Promise<any> {
     try {
-      await this.dbInstance.sync();
-      return true;
+      this.dbInstance = this.createDbInstance(this.connectionOptions);
+
+      // @ts-ignore:disable-next-line
+      this.dbInstance.beforeConnect(async (config: any) => {
+        if (!this.isConnected) {
+          const name = this.dbName[0].toUpperCase() + this.dbName.slice(1);
+          logger.yellow(`Waiting for ${name} sql database to connect.`);
+        }
+      });
+
+      return this.dbInstance.authenticate();
     } catch (error) {
       console.error("Unable to sync to the database:", error);
-      return false;
     }
   }
 
@@ -47,16 +62,16 @@ class SqlDatabase implements Database {
    * @returns void
    */
   connection(logs: boolean): void {
-    this.dbInstance
-      .authenticate()
-      .then(() => {
-        if (logs) {
-          logger("Connection has been established successfully.");
-        }
-      })
-      .catch(error => {
-        console.error("Unable to connect to the database:", error);
-      });
+    this.logs = logs;
+
+    // @ts-ignore:disable-next-line
+    this.dbInstance.afterConnect(async (config: any) => {
+      if (!this.isConnected) {
+        this.isConnected = true;
+        const name = this.dbName[0].toUpperCase() + this.dbName.slice(1);
+        logger.green(`${name} database is connected.`);
+      }
+    });
   }
 
   /**
@@ -65,6 +80,7 @@ class SqlDatabase implements Database {
    * @returns SqlModelDictionary
    */
   models(): SqlModelDictionary {
+    this.dbInstance.sync({ alter: true });
     this.schemas.map(({ name, schema, options = {} }: SchemaObject) => this.dbInstance.define(name, schema, options));
     return this.dbInstance.models;
   }
@@ -77,9 +93,10 @@ class SqlDatabase implements Database {
    */
   private createDbInstance(settings?: ISqlUriConnection | ISqlConnection | Options | string): Sequelize {
     const { uri, options = {} } = settings as ISqlUriConnection;
-    const message = `Waiting for ${this.dbName} sql database to connect.`;
-    options.logging = () => {
-      logger(message);
+    options.logging = (...msg) => {
+      if (this.logs) {
+        logger.gray(msg[0]);
+      }
     };
 
     if (uri) {
