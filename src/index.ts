@@ -81,7 +81,7 @@ class SqlDatabase implements Database {
    */
   models(): SqlModelDictionary {
     this.dbInstance.sync({ alter: true });
-    this.schemas.map(({ name, schema, options = {} }: SchemaObject) => this.dbInstance.define(name, schema, options));
+    this.schemas.map(({ name, schema, options = {} }: SchemaObject) => this.dbInstance.define(name.toLocaleLowerCase(), schema, options));
     return this.dbInstance.models;
   }
 
