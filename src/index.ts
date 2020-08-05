@@ -93,11 +93,7 @@ class SqlDatabase implements Database {
    */
   private createDbInstance(settings?: ISqlUriConnection | ISqlConnection | Options | string): Sequelize {
     const { uri, options = {} } = settings as ISqlUriConnection;
-    options.logging = (...msg) => {
-      if (this.logs) {
-        logger.gray(msg[0]);
-      }
-    };
+    options.logging = false;
 
     if (uri) {
       return new Sequelize(uri, options);
