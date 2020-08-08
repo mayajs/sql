@@ -55,19 +55,13 @@ class SqlDatabase implements Database {
    */
   connection(logs: boolean): void {
     const name = this.dbName[0].toUpperCase() + this.dbName.slice(1);
+    const connecting = setInterval(
+      this.onConnecting(logs, () => clearInterval(connecting)),
+      1000,
+    );
+
     this.logs = logs;
     this.dbInstance = this.createDbInstance(this.connectionOptions);
-
-    const checkConnection = setInterval(async () => {
-      if (this.isConnected) {
-        clearInterval(checkConnection);
-        return;
-      }
-
-      if (logs) {
-        console.log(`\x1b[33m[mayajs] Waiting for ${this.dbName} database to connect.\x1b[0m`);
-      }
-    }, 1000);
 
     // @ts-ignore:disable-next-line
     this.dbInstance.beforeConnect(this.beforeConnect(name));
@@ -86,6 +80,18 @@ class SqlDatabase implements Database {
     this.schemas.map(({ name, schema, options = {} }: SchemaObject) => this.dbInstance.define(name.toLocaleLowerCase(), schema, options));
     models = this.dbInstance.models;
     return models;
+  }
+
+  private onConnecting(logs: boolean, onConnect: () => void): () => void {
+    return () => {
+      if (this.isConnected) {
+        return onConnect();
+      }
+
+      if (logs) {
+        console.log(`\x1b[33m[mayajs] Waiting for ${this.dbName} database to connect.\x1b[0m`);
+      }
+    };
   }
 
   private beforeConnect(name: string): () => void {
