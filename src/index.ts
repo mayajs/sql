@@ -70,11 +70,7 @@ class SqlDatabase implements Database {
     }, 1000);
 
     // @ts-ignore:disable-next-line
-    this.dbInstance.beforeConnect(async (config: any) => {
-      if (!this.isConnected) {
-        logger.yellow(`Waiting for ${name} database to connect.`);
-      }
-    });
+    this.dbInstance.beforeConnect(this.beforeConnect(name));
 
     // @ts-ignore:disable-next-line
     this.dbInstance.afterConnect(this.afterConnect(name));
@@ -90,6 +86,14 @@ class SqlDatabase implements Database {
     this.schemas.map(({ name, schema, options = {} }: SchemaObject) => this.dbInstance.define(name.toLocaleLowerCase(), schema, options));
     models = this.dbInstance.models;
     return models;
+  }
+
+  private beforeConnect(name: string): () => void {
+    return () => {
+      if (!this.isConnected) {
+        logger.yellow(`Waiting for ${name} database to connect.`);
+      }
+    };
   }
 
   private afterConnect(name: string): () => void {
