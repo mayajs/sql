@@ -89,7 +89,7 @@ class SqlDatabase implements Database {
       }
 
       if (logs) {
-        console.log(`\x1b[33m[mayajs] Waiting for ${this.dbName} database to connect.\x1b[0m`);
+        logger.yellow(`Waiting for ${this.dbName} database to connect.`);
       }
     };
   }
