@@ -41,16 +41,6 @@ class SqlDatabase implements Database {
    */
   async connect(): Promise<any> {
     try {
-      this.dbInstance = this.createDbInstance(this.connectionOptions);
-
-      // @ts-ignore:disable-next-line
-      this.dbInstance.beforeConnect(async (config: any) => {
-        if (!this.isConnected) {
-          const name = this.dbName[0].toUpperCase() + this.dbName.slice(1);
-          logger.yellow(`Waiting for ${name} sql database to connect.`);
-        }
-      });
-
       return this.dbInstance.authenticate();
     } catch (error) {
       console.error("Unable to sync to the database:", error);
@@ -64,13 +54,32 @@ class SqlDatabase implements Database {
    * @returns void
    */
   connection(logs: boolean): void {
+    const name = this.dbName[0].toUpperCase() + this.dbName.slice(1);
     this.logs = logs;
+    this.dbInstance = this.createDbInstance(this.connectionOptions);
+
+    const checkConnection = setInterval(async () => {
+      if (this.isConnected) {
+        clearInterval(checkConnection);
+        return;
+      }
+
+      if (logs) {
+        console.log(`\x1b[33m[mayajs] Waiting for ${this.dbName} database to connect.\x1b[0m`);
+      }
+    }, 1000);
 
     // @ts-ignore:disable-next-line
-    this.dbInstance.afterConnect(async (config: any) => {
+    this.dbInstance.beforeConnect(async (config: any) => {
+      if (!this.isConnected) {
+        logger.yellow(`Waiting for ${name} database to connect.`);
+      }
+    });
+
+    // @ts-ignore:disable-next-line
+    this.dbInstance.afterConnect((config: any) => {
       if (!this.isConnected) {
         this.isConnected = true;
-        const name = this.dbName[0].toUpperCase() + this.dbName.slice(1);
         logger.green(`${name} database is connected.`);
       }
     });
