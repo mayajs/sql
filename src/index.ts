@@ -77,12 +77,7 @@ class SqlDatabase implements Database {
     });
 
     // @ts-ignore:disable-next-line
-    this.dbInstance.afterConnect((config: any) => {
-      if (!this.isConnected) {
-        this.isConnected = true;
-        logger.green(`${name} database is connected.`);
-      }
-    });
+    this.dbInstance.afterConnect(this.afterConnect(name));
   }
 
   /**
@@ -95,6 +90,15 @@ class SqlDatabase implements Database {
     this.schemas.map(({ name, schema, options = {} }: SchemaObject) => this.dbInstance.define(name.toLocaleLowerCase(), schema, options));
     models = this.dbInstance.models;
     return models;
+  }
+
+  private afterConnect(name: string): () => void {
+    return () => {
+      if (!this.isConnected) {
+        this.isConnected = true;
+        logger.green(`${name} database is connected.`);
+      }
+    };
   }
 
   /**
