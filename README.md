@@ -3,25 +3,28 @@
 
 ## Installation
 
+- Install Mayajs Sql plugin
+
 ```sh
 npm i @mayajs/sql
 ```
 
-## Functions
+- Install [Sequelize](https://sequelize.org/master/manual/getting-started.html). Mayajs uses sequelize as an ORM.
 
-- [Installation](#installation)
-- [Functions](#functions)
-- [Sql](#sql)
-- [Schema](#schema)
-    - [Field](#field)
-- [Query](#query)
-- [Create database](#create-database)
-- [Create table](#create-table)
-- [Insert](#insert)
-- [Select](#select)
-- [Update](#update)
-- [Delete](#delete)
-- [Transaction](#transaction)
+```sh
+npm install --save sequelize
+```
+
+You'll also have to manually install the driver for your database of choice:
+
+```
+# One of the following:
+$ npm install --save pg pg-hstore # Postgres
+$ npm install --save mysql2
+$ npm install --save mariadb
+$ npm install --save sqlite3
+$ npm install --save tedious # Microsoft SQL Server
+```
 
 ## Sql
 
@@ -37,23 +40,29 @@ import { Sql } from "@mayajs/sql";
 
 ```javascript
 Sql({
-  host: "your-host-name",
-  user: "your-user-name",
-  password: "your-user-password",
-  database: "your-database-name", // optional
+  name: "database-name",
+  options: {
+    database: "sql-database",
+    username: "sql-username",
+    password: "sql-password",
+    options: {
+      host: "localhost",
+      dialect: "mysql" /* one of 'mariadb' | 'postgres' | 'mssql' */,
+    },
+  },
+  schemas: [
+    sample, // Sequelize Schema here
+  ],
 });
 ```
 
 Adding `Sql` on `App Decorator`
 
 ```javascript
+import Sql from "./databases/sql";
+
 @App({
-  database: Sql({
-    host: env.HOST || "",
-    user: env.USER || "",
-    password: env.PASSWORD || "",
-    database: env.DATABASE || "",
-  }),
+  databases: [Sql],
 })
 export class AppModule {}
 ```
@@ -68,301 +77,30 @@ An interface for table fields. Can be used when creating tables for type checkin
 import { Schema } from "@mayajs/sql";
 ```
 
-#### Field
-
-- `type` : **`( String )`** This will set the type of the field.
-
-* `options` : **`( String )`** Sets the following properties : \***\*OPTIONAL\*\***.
-  - Attributes
-  - Null
-  - Default
-  - Comments
-  - Extra
-
 **Implementation**
 
 ```javascript
-// Fields to be created
-const fields: Schema = {
-  id: { type: "INT(6)", options: "UNSIGNED AUTO_INCREMENT PRIMARY KEY" },
-  firstname: { type: "VARCHAR(30)", options: "NOT NULL" },
-  lastname: { type: "VARCHAR(30)", options: "NOT NULL" },
-  email: { type: "VARCHAR(50)", options: "NOT NULL" },
-  reg_date: { type: "TIMESTAMP", options: "DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP" },
-};
-```
+import { DataTypes } from "sequelize";
+import { SqlModel } from "@mayajs/sql";
 
-## Query
-
-This function is a general purpose for executing query to the database. Its supports all `SQL queries` in the form of string. It will return a `Promise<T>` if the query is succesful and `MySql Error Object` if its failed.
-
-**Import**
-
-```javascript
-import { Query } from "@mayajs/sql";
-```
-
-**Implementation**
-
-```javascript
-// Promise
-Query("your-query-here")
-  .then(result => console.log(result))
-  .catch(error => console.log(error));
-
-// Async/Await
-try {
-  const result = await Query("your-query-here");
-  return result;
-} catch (error) {
-  return error;
-}
-```
-
-## Create database
-
-This function will create a database. It accepts the `name` of database. It will return an `success object` if the table is successfully created and an `error object` if its failed.
-
-**Parameter**
-
-- `name` : **`( String )`** The name of the database.
-
-**Import**
-
-```javascript
-import { CreateDatabase } from "@mayajs/sql";
-```
-
-**Implementation**
-
-```javascript
-// Promise
-CreateDatabase("databse-name")
-  .then(result => console.log(result))
-  .catch(error => console.log(error));
-
-// Async/Await
-try {
-  const result = await CreateDatabase("databse-name");
-  return result;
-} catch (error) {
-  return error;
-}
-```
-
-## Create table
-
-This function will create a table in the speficied database. It accepts `name` and `fields` as arguments. It will return an `success object` if the table is successfully created and an `error object` if its failed.
-
-**Parameter**
-
-- `name` : **`( String )`** The name of the table.
-- `fields` : **`( Schema )`** Object of fields.
-
-**Import**
-
-```javascript
-import { CreateTable } from "@mayajs/sql";
-```
-
-**Implementation**
-
-```javascript
-// Promise
-CreateTable("table-name", fields)
-  .then(result => console.log(result))
-  .catch(error => console.log(error));
-
-// Async/Await
-try {
-  const result = await CreateTable("table-name", fields);
-  return result;
-} catch (error) {
-  return error;
-}
-```
-
-## Insert
-
-This function will insert data on a table in the database. It accepts `table` and `fields` as arguments. It will return an `object` if the query is successful and an `error object` if its failed.
-
-**Parameter**
-
-- `name` : **`( String )`** The name of the table.
-- `fields` : **`( { [name: string]: any } )`** Fields object.
-
-**Import**
-
-```javascript
-import { Insert } from "@mayajs/sql";
-```
-
-**Implementation**
-
-```javascript
-// Fields to be insert
-const fields = {
-  firstname: "",
-  lastname: "",
-  email: "",
+const schema = {
+  name: {
+    type: DataTypes.STRING,
+    allowNull: false,
+  },
 };
 
-// Promise
-Insert("table-name", fields)
-  .then(result => console.log(result))
-  .catch(error => console.log(error));
-
-// Async/Await
-try {
-  const result = await Insert("table-name", fields);
-  return result;
-} catch (error) {
-  return error;
-}
+export default SqlModel("User", schema, {});
 ```
 
-## Select
+# Examples
 
-This function will select data on a table in the database. It accepts `options` for the select query. It will return the result of the query if the query if its successful and an `error object` if its failed.
+Check out [live examples](https://github.com/mayajs/sample/crud/sql) for more info.
 
-**Parameter**
+## Collaborating
 
-- `options` : **`( Object )`** Query options.
-  - `columns` : **`( Array )`** Column names to be selected. \***\*OPTIONAL\*\***.
-  - `table` : **`( String )`** Name of the table.
-  - `where` : **`( String )`** Equivalent to `WHERE` clause in SQL query. \***\*OPTIONAL\*\***.
-  - `join` : **`( String )`** Equivalent to `JOIN` clause in SQL query. \***\*OPTIONAL\*\***.
-  - `orderBy` : **`( String )`** Equivalent to `ORDER BY` clause in SQL query. \***\*OPTIONAL\*\***.
-  - `limit` : **`( Number )`** Equivalent to `LIMIT` clause in SQL query. \***\*OPTIONAL\*\***.
+See collaborating guides [here.](https://github.com/mayajs/maya/blob/master/COLLABORATOR_GUIDE.md)
 
-**Import**
+## People
 
-```javascript
-import { Select } from "@mayajs/sql";
-```
-
-**Implementation**
-
-```javascript
-// Select OPTIONS
-const options = {
-  columns: ["id", "email"],
-  table: "customers",
-  where: "id=1",
-  join: "products ON customers.favorite_product = products.id",
-  orderBy: "id DESC",
-  limit: 100,
-};
-
-// Promise
-Select(options)
-  .then(result => console.log(result))
-  .catch(error => console.log(error));
-
-// Async/Await
-try {
-  const result = await Select(options);
-  return result;
-} catch (error) {
-  return error;
-}
-```
-
-## Update
-
-This function will update data on a table in the database. It accepts `table` name, `fields` object and an optional `where` condition. It will return the result of the query if its successful and an `error object` if its failed.
-
-**Parameter**
-
-- `table` : **`( String )`** Name of the table.
-- `fields` : **`( { [name: string]: any } )`** Fields object.
-- `where` : **`( String )`** Equivalent to `WHERE` clause in SQL query.
-
-**Import**
-
-```javascript
-import { Update } from "@mayajs/sql";
-```
-
-**Implementation**
-
-```javascript
-const table = "test";
-const fields = {
-  firstname: "",
-  lastname: "",
-  email: "",
-};
-const where = "id=1";
-
-// Promise
-Update(table, fields, where)
-  .then(result => console.log(result))
-  .catch(error => console.log(error));
-
-// Async/Await
-try {
-  const result = await Update(table, fields, where);
-  return result;
-} catch (error) {
-  return error;
-}
-```
-
-## Delete
-
-This function will delete data on a table in the database. It accepts `table` name and an optional `where` condition. It will return the result of the query if its successful and an `error object` if its failed.
-
-**Parameter**
-
-- `table` : **`( String )`** Name of the table.
-- `where` : **`( String )`** Equivalent to `WHERE` clause in SQL query.
-
-**Import**
-
-```javascript
-import { Delete } from "@mayajs/sql";
-```
-
-**Implementation**
-
-```javascript
-// Promise
-Delete("test", "id=1")
-  .then(result => console.log(result))
-  .catch(error => console.log(error));
-
-// Async/Await
-try {
-  const result = await Delete("test", "id=1");
-  return result;
-} catch (error) {
-  return error;
-}
-```
-
-## Transaction
-
-Transactions allows you process a transaction and rollback if a transaction fails. 
-
-**Import**
-
-```javascript
-import { Transaction, Delete } from "@mayajs/sql";
-```
-
-**Implementation**
-
-```javascript
-// Async/Await
-const transaction = new Transaction()
-try {
-  await transaction.begin()
-  const result = await Delete("test", "id=1");
-  await transaction.commit()
-  return result;
-} catch (error) {
-  await transaction.rollback()
-  return error;
-}
-```
+Author and maintainer [Mac Ignacio](https://github.com/Mackignacio)
