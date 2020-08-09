@@ -41,16 +41,6 @@ class SqlDatabase implements Database {
    */
   async connect(): Promise<any> {
     try {
-      this.dbInstance = this.createDbInstance(this.connectionOptions);
-
-      // @ts-ignore:disable-next-line
-      this.dbInstance.beforeConnect(async (config: any) => {
-        if (!this.isConnected) {
-          const name = this.dbName[0].toUpperCase() + this.dbName.slice(1);
-          logger.yellow(`Waiting for ${name} sql database to connect.`);
-        }
-      });
-
       return this.dbInstance.authenticate();
     } catch (error) {
       console.error("Unable to sync to the database:", error);
@@ -64,16 +54,20 @@ class SqlDatabase implements Database {
    * @returns void
    */
   connection(logs: boolean): void {
+    const name = this.dbName[0].toUpperCase() + this.dbName.slice(1);
+    const connecting = setInterval(
+      this.onConnecting(logs, () => clearInterval(connecting)),
+      1000,
+    );
+
     this.logs = logs;
+    this.dbInstance = this.createDbInstance(this.connectionOptions);
 
     // @ts-ignore:disable-next-line
-    this.dbInstance.afterConnect(async (config: any) => {
-      if (!this.isConnected) {
-        this.isConnected = true;
-        const name = this.dbName[0].toUpperCase() + this.dbName.slice(1);
-        logger.green(`${name} database is connected.`);
-      }
-    });
+    this.dbInstance.beforeConnect(this.beforeConnect(name));
+
+    // @ts-ignore:disable-next-line
+    this.dbInstance.afterConnect(this.afterConnect(name));
   }
 
   /**
@@ -86,6 +80,35 @@ class SqlDatabase implements Database {
     this.schemas.map(({ name, schema, options = {} }: SchemaObject) => this.dbInstance.define(name.toLocaleLowerCase(), schema, options));
     models = this.dbInstance.models;
     return models;
+  }
+
+  private onConnecting(logs: boolean, onConnect: () => void): () => void {
+    return () => {
+      if (this.isConnected) {
+        return onConnect();
+      }
+
+      if (logs) {
+        logger.yellow(`Waiting for ${this.dbName} database to connect.`);
+      }
+    };
+  }
+
+  private beforeConnect(name: string): () => void {
+    return () => {
+      if (!this.isConnected) {
+        logger.yellow(`Waiting for ${name} database to connect.`);
+      }
+    };
+  }
+
+  private afterConnect(name: string): () => void {
+    return () => {
+      if (!this.isConnected) {
+        this.isConnected = true;
+        logger.green(`${name} database is connected.`);
+      }
+    };
   }
 
   /**
