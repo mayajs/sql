@@ -1,13 +1,12 @@
 {
-    "editor.fontFamily": "Fira Code, Consolas, 'Courier New', monospace",
-    "[typescript]": {
-        "editor.defaultFormatter": "esbenp.prettier-vscode"
-    },
-    "editor.suggestSelection": "first",
-    "editor.fontLigatures": true,
-    "prettier.trailingComma": "es5",
-    "prettier.printWidth": 160,
-    "terminal.integrated.shell.windows": "C:\\Windows\\System32\\cmd.exe",
-    "vsicons.projectDetection.autoReload": true,
-    "workbench.colorCustomizations": {}
+  "editor.fontFamily": "Fira Code, Consolas, 'Courier New', monospace",
+  "[typescript]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "editor.suggestSelection": "first",
+  "editor.fontLigatures": true,
+  "prettier.trailingComma": "es5",
+  "prettier.printWidth": 160,
+  "vsicons.projectDetection.autoReload": true,
+  "workbench.colorCustomizations": {}
 }
