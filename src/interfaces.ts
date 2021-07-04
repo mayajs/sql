@@ -36,5 +36,5 @@ export interface SqlDatabases {
 export interface SchemaObject {
   name: string;
   schema: ModelAttributes;
-  options: ModelOptions;
+  options?: ModelOptions;
 }
