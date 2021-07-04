@@ -10,17 +10,13 @@ export class SqlServices extends Services {
     this.list = {};
   }
 
-  async connect(name: string) {
+  async connect(name: string): Promise<SqlInstance> {
     const db = this.list[name];
-    try {
-      const instance = this.createDbInstance(db.options);
-      await instance.authenticate();
-      this.list[name].instance = instance;
-      console.log(`\x1b[32m[mayajs] ${name} is connected!\x1b[0m`);
-      return instance;
-    } catch (error) {
-      console.log(error);
-    }
+    const instance = this.createDbInstance(db.options);
+    await instance.authenticate();
+    this.list[name].instance = instance;
+    console.log(`\x1b[32m[mayajs] ${name} is connected!\x1b[0m`);
+    return this.list[name];
   }
 
   set options(value: SqlOptions) {
@@ -32,8 +28,7 @@ export class SqlServices extends Services {
     return this.list[name];
   }
 
-  mapSchemas(name: string): void {
-    const db = this.list[name];
+  mapSchemas(db: SqlInstance): void {
     if (db.schemas && db.schemas?.length > 0) {
       db.instance.sync({ alter: true });
       db.schemas.map(({ name, schema, options = {} }: SchemaObject) => db.instance.define(name.toLocaleLowerCase(), schema, options));
