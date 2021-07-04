@@ -1,37 +1,40 @@
 import { Options, ModelAttributes, ModelOptions, ModelCtor, Model, Sequelize } from "sequelize";
 
-export interface ISqlConnection {
+interface SqlInstanceProps {
+  options: SqlUriConnection | SqlConnection | Options | string;
+  schemas: SchemaObject[];
+}
+
+export interface SqlConnection {
   database: string;
   username: string;
   password?: string;
   options?: Options;
 }
 
-export interface ISqlUriConnection {
+export interface SqlUriConnection {
   uri: string;
   options?: Options;
 }
 
-export interface SqlOptions {
+export interface SqlOptions extends SqlInstanceProps {
   name: string;
-  schemas?: any[];
-  options: ISqlUriConnection | ISqlConnection | Options | string;
 }
-
 export interface SqlModelDictionary {
   [key: string]: ModelCtor<Model<any, any>>;
 }
 
-export interface Database {
-  name: string;
+export interface SqlInstance extends SqlInstanceProps {
   instance: Sequelize;
-  connect: () => Promise<any>;
-  connection: (logs: boolean) => void;
-  models: () => SqlModelDictionary;
+  models: SqlModelDictionary;
+}
+
+export interface SqlDatabases {
+  [x: string]: SqlInstance;
 }
 
 export interface SchemaObject {
   name: string;
   schema: ModelAttributes;
-  options: ModelOptions;
+  options?: ModelOptions;
 }

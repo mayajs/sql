@@ -1,6 +1,6 @@
 {
   "name": "@mayajs/sql",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "MayaJS Sql Decorators and Modules",
   "repository": {
     "type": "git",
@@ -50,17 +50,16 @@
     "mysql2": "^2.1.0",
     "pg": "^8.3.0",
     "pg-hstore": "^2.3.3",
-    "prettier": "^2.0.5",
+    "prettier": "^2.3.2",
     "rimraf": "^3.0.2",
-    "sequelize": "^6.3.4",
     "sqlite3": "^5.0.0",
     "tedious": "^9.0.1",
     "ts-lint": "^4.5.1",
     "tslint-config-prettier": "^1.18.0",
-    "typescript": "^3.9.7"
+    "typescript": "^4.3.5"
   },
-  "peerDependencies": {
-    "@types/sequelize": "^4.28.9",
-    "sequelize": "^6.3.4"
+  "dependencies": {
+    "@mayajs/router": "^0.4.0",
+    "sequelize": "^6.6.4"
   }
 }
