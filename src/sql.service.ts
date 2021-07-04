@@ -25,7 +25,7 @@ export class SqlServices extends Services {
 
   set options(value: SqlOptions) {
     const { name, ...rest } = value;
-    this.list[name] = { ...rest, instance: new Sequelize(), models: {} };
+    this.list[name] = { ...rest, instance: new Sequelize({ dialect: "mysql" }), models: {} };
   }
 
   database(name: string): SqlInstance {
@@ -50,7 +50,6 @@ export class SqlServices extends Services {
   private createDbInstance(settings?: SqlUriConnection | SqlConnection | Options | string): Sequelize {
     const { uri, options = {} } = settings as SqlUriConnection;
     options.logging = false;
-
     if (uri) {
       return new Sequelize(uri, options);
     }
