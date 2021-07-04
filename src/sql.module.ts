@@ -16,7 +16,9 @@ export class SqlModule extends CustomModule {
 
   invoke(): void {
     this.service.options = SqlModule.options;
-    this.service.connect(SqlModule.options.name);
-    this.service.mapSchemas(SqlModule.options.name);
+    this.service
+      .connect(SqlModule.options.name)
+      .then(db => this.service.mapSchemas(db))
+      .catch(error => console.log(error));
   }
 }
