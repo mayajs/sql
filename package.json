@@ -32,7 +32,13 @@
     "node": ">=12.0.0"
   },
   "files": [
-    "lib"
+    "LICENSE",
+    "README.md",
+    "!node_modules",
+    "!scripts",
+    "**.js",
+    "!interfaces.js",
+    "**.d.ts"
   ],
   "scripts": {
     "clean": "rimraf index.js && rimraf --glob **.d.ts && rimraf --glob sql.**.js && rimraf --glob interfaces.** && rimraf lib",
