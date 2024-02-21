@@ -1,6 +1,6 @@
 {
   "name": "@mayajs/sql",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "description": "MayaJS Sql Decorators and Modules",
   "repository": {
     "type": "git",

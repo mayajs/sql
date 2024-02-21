@@ -3,6 +3,7 @@ logs
 
 # Build directory
 dist
+temp**
 
 # Test directories
 **.js
