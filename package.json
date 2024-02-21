@@ -35,8 +35,12 @@
     "lib"
   ],
   "scripts": {
-    "start": "rimraf lib && tsc -w",
-    "prepack": "rimraf lib && tsc"
+    "clean": "rimraf index.js && rimraf --glob **.d.ts && rimraf --glob sql.**.js && rimraf --glob interfaces.** && rimraf lib",
+    "tgz": "rimraf --glob *.tgz",
+    "package": "node ./scripts/clean-package.js",
+    "start": "npm run clean && npm run tgz && tsc -w",
+    "prepack": "npm run clean && npm run package && tsc --outDir .",
+    "release": "semantic-release --branches main"
   },
   "prettier": {
     "singleQuote": false,
@@ -45,21 +49,19 @@
     "trailingComma": "all"
   },
   "devDependencies": {
+    "@mayajs/router": "^0.6.6",
     "@types/sequelize": "^4.28.9",
-    "mariadb": "^2.4.2",
-    "mysql2": "^2.1.0",
-    "pg": "^8.3.0",
-    "pg-hstore": "^2.3.3",
-    "prettier": "^2.3.2",
-    "rimraf": "^3.0.2",
-    "sqlite3": "^5.0.0",
-    "tedious": "^9.0.1",
-    "ts-lint": "^4.5.1",
-    "tslint-config-prettier": "^1.18.0",
-    "typescript": "^4.3.5"
+    "mariadb": "^3.2.3",
+    "mysql2": "^3.9.1",
+    "pg": "^8.11.3",
+    "pg-hstore": "^2.3.4",
+    "prettier": "^3.2.5",
+    "rimraf": "^5.0.5",
+    "sqlite3": "^5.1.7",
+    "tedious": "^17.0.0",
+    "typescript": "^5.3.3"
   },
   "dependencies": {
-    "@mayajs/router": "^0.5.4",
-    "sequelize": "^6.6.4"
+    "sequelize": "^6.37.1"
   }
 }

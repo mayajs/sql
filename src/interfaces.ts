@@ -1,4 +1,4 @@
-import { Options, ModelAttributes, ModelOptions, ModelCtor, Model, Sequelize } from "sequelize";
+import { Options, ModelAttributes, ModelOptions, ModelStatic, Model, Sequelize } from "sequelize";
 
 interface SqlInstanceProps {
   options: SqlUriConnection | SqlConnection | Options | string;
@@ -21,7 +21,7 @@ export interface SqlOptions extends SqlInstanceProps {
   name: string;
 }
 export interface SqlModelDictionary {
-  [key: string]: ModelCtor<Model<any, any>>;
+  [key: string]: ModelStatic<Model<any, any>>;
 }
 
 export interface SqlInstance extends SqlInstanceProps {
